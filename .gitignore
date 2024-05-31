@@ -1,0 +1,45 @@
+# Ignorar archivos específicos
+Input.txt
+Output.txt
+Program.exe
+
+# Ignorar archivos y directorios de sistema
+.DS_Store
+Thumbs.db
+
+# Ignorar archivos de compilación y binarios comunes
+*.obj
+*.o
+*.exe
+*.dll
+*.so
+*.idl
+*.H
+*.dylib
+
+# Ignorar archivos de depuración
+*.log
+*.tmp
+
+# Ignorar archivos de configuración de IDEs
+.vscode/
+.idea/
+*.suo
+*.user
+*.userossc
+*.sln
+*.swp
+
+# Ignorar directorios de dependencia
+node_modules/
+vendor/
+.vscode/
+mingw32/
+# Ignorar archivos específicos de lenguajes de programación (ejemplo para C/C++)
+*.out
+*.a
+*.lib
+*.class
+
+# Ignorar archivos generados por el sistema de control de versiones
+*.orig
