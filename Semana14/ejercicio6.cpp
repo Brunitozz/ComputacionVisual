@@ -15,13 +15,8 @@ void display() {
     glRotatef(yRotated, 0.0, 1.0, 0.0);
     glRotatef(zRotated, 0.0, 0.0, 1.0);
 
-    glColor3f(0, 0, 0);
-
-    glutWireCone(1.0, 2.0, 45, 3); // Parámetros: base, altura, slices, stacks
-
-    glColor3f(0.5, 0.2, 0.5);
-
-    glutSolidCone(1.0, 2.0, 45, 3);
+    glColor3f(1, 0, 0);
+    glutWireTeapot(1);
 
     glPopMatrix();
 
@@ -81,16 +76,3 @@ int main(int argc, char** argv) {
     glutMainLoop();
     return 0;
 }
-
-
-
-/*cono alambrico  solido estatico 45 merdianos y 3 paralelas
-
-glColor3f(0, 0, 0);
-
-    glutWireCone(1.0, 2.0, 45, 3); // Parámetros: base, altura, slices, stacks
-
-    glColor3f(0.5, 0.2, 0.5);
-
-    glutSolidCone(1.0, 2.0, 45, 3);
-*/
