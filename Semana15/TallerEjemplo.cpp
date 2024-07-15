@@ -1,46 +1,119 @@
 #include <stdlib.h>
-#include<conio.h>
-#include <gl/glut.h>
-// declaracion de variables
-// GLfloat ...;
-// theta[] me indica los ángulos iniciales en los 3 ejes
-static GLfloat theta[] = { 0.0,0.0,0.0 };
-// eje es el ángulo a rotar
+#include <GL/glut.h>
+
+// Declaración de variables
+static GLfloat theta[] = { 0.0, 0.0, 0.0 };
 static GLint eje = 2;
-// construya su polígono base
-void cara()
+static int delay = 100; // Milisegundos entre cada actualización
+
+
+// Función para dibujar una cara del cubo
+void cara(GLfloat v1[], GLfloat v2[], GLfloat v3[], GLfloat v4[], GLfloat color[])
 {
     glBegin(GL_POLYGON);
-    // ... escriba su código
+    glColor3fv(color);
+    glVertex3fv(v1);
+    glVertex3fv(v2);
+    glVertex3fv(v3);
+    glVertex3fv(v4);
     glEnd();
 }
-// construya su objeto geométrico mediante cubo()
+
+// Función para construir el cubo
 void cubo(void)
 {
-    cara();
-    // ... escriba su código
+    GLfloat v[8][3] = {
+        {-0.5, -0.5,  0.5},
+        { 0.5, -0.5,  0.5},
+        { 0.5,  0.5,  0.5},
+        {-0.5,  0.5,  0.5},
+        {-0.5, -0.5, -0.5},
+        { 0.5, -0.5, -0.5},
+        { 0.5,  0.5, -0.5},
+        {-0.5,  0.5, -0.5}
+    };
+
+    GLfloat colores[6][3] = {
+        {1.0, 0.0, 0.0}, // Rojo
+        {0.0, 1.0, 0.0}, // Verde
+        {0.0, 0.0, 1.0}, // Azul
+        {1.0, 1.0, 0.0}, // Amarillo
+        {1.0, 0.0, 1.0}, // Magenta
+        {0.0, 1.0, 1.0}  // Cian
+    };
+
+    cara(v[0], v[1], v[2], v[3], colores[0]);
+    cara(v[4], v[5], v[6], v[7], colores[1]);
+    cara(v[0], v[1], v[5], v[4], colores[2]);
+    cara(v[2], v[3], v[7], v[6], colores[3]);
+    cara(v[0], v[3], v[7], v[4], colores[4]);
+    cara(v[1], v[2], v[6], v[5], colores[5]);
 }
-// dibujamos nuestra escena
+
+// Función para dibujar los ejes coordenados
+void dibujarEjes(void)
+{
+    glBegin(GL_LINES);
+
+    // Eje X en rojo
+    glColor3f(1.0, 0.0, 0.0);
+    glVertex3f(-1.0, 0.0, 0.0);
+    glVertex3f(1.0, 0.0, 0.0);
+
+    // Eje Y en verde
+    glColor3f(0.0, 1.0, 0.0);
+    glVertex3f(0.0, -1.0, 0.0);
+    glVertex3f(0.0, 1.0, 0.0);
+
+    // Eje Z en azul
+    glColor3f(0.0, 0.0, 1.0);
+    glVertex3f(0.0, 0.0, -1.0);
+    glVertex3f(0.0, 0.0, 1.0);
+
+    glEnd();
+}
+
+// Dibujamos nuestra escena
 void display(void)
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
-    // composición de rotaciones
+
+    // Composición de rotaciones
     glRotatef(theta[0], 1.0, 0.0, 0.0);
     glRotatef(theta[1], 0.0, 1.0, 0.0);
     glRotatef(theta[2], 0.0, 0.0, 1.0);
+
+    // Dibujar ejes y cubo
+    dibujarEjes();
     cubo();
+
     glFlush();
-    // intercambiamos los buffers, el que se muestra y el que está oculto
     glutSwapBuffers();
 }
-// esta función controla el ángulo de rotación según el eje de giro
-void girar_objeto_geometrico()
+
+void scaleCube()
 {
-    theta[eje] += 2.0;
+    glLoadIdentity();
+    for (GLfloat i = 0; i < 5; i += 0.1)
+    {
+        glPushMatrix();
+        glScalef(0.5, i, 0.5);
+        display();
+        glPopMatrix();
+    }
+}
+
+// Controla el ángulo de rotación según el eje de giro
+void girar_objeto_geometrico(int value)
+{
+    theta[eje] += 7; // Incremento más pequeño para una rotación más lenta
     if (theta[eje] > 360) theta[eje] -= 360.0;
     display();
+    glutTimerFunc(delay, girar_objeto_geometrico, 0); // Llamar a la función nuevamente después de `delay` milisegundos
 }
+
+// Función para el control del teclado
 void teclado(unsigned char tecla, int x, int y)
 {
     switch (tecla) {
@@ -50,35 +123,38 @@ void teclado(unsigned char tecla, int x, int y)
     case 'f': exit(0); break;
     }
 }
-// control de ventana (recuerde el volumen de visualización)
-// modifique dicho volumen según su conveniencia
+
+// Control de ventana (volumen de visualización)
 void myReshape(int w, int h)
 {
     glViewport(0, 0, w, h);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     if (w <= h)
-        glOrtho(-2.0, 2.0, -2.0 * (GLfloat)h / (GLfloat)w,
-            2.0 * (GLfloat)h / (GLfloat)w, -10.0, 10.0);
+        glOrtho(-2.0, 2.0, -2.0 * (GLfloat)h / (GLfloat)w, 2.0 * (GLfloat)h / (GLfloat)w, -10.0, 10.0);
     else
-        glOrtho(-2.0 * (GLfloat)w / (GLfloat)h,
-            2.0 * (GLfloat)w / (GLfloat)h, -2.0, 2.0, -10.0, 10.0);
+        glOrtho(-2.0 * (GLfloat)w / (GLfloat)h, 2.0 * (GLfloat)w / (GLfloat)h, -2.0, 2.0, -10.0, 10.0);
     glMatrixMode(GL_MODELVIEW);
 }
-void main(int argc, char** argv)
+
+// Función principal
+int main(int argc, char** argv)
 {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
     glutInitWindowSize(500, 500);
-    glutCreateWindow("mi objeto bajo rotaciones");
+    glutCreateWindow("Cubo bajo rotaciones");
+
+    // Configuración de las funciones de GLUT
     glutReshapeFunc(myReshape);
-    // invocamos a display() para dibujar nuestra escena
     glutDisplayFunc(display);
-    // esta función llama a girar_objeto_geométrico() mientras no haya evento 
-    //alguno ocasionado por el usuario
-    glutIdleFunc(girar_objeto_geometrico);
     glutKeyboardFunc(teclado);
-    /*glutMouseFunc(mouse);*/
+
     glEnable(GL_DEPTH_TEST);
+
+    // Usar glutTimerFunc para controlar la velocidad de rotación
+    glutTimerFunc(delay, girar_objeto_geometrico, 0);
+
     glutMainLoop();
+    return 0;
 }
