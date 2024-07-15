@@ -5,7 +5,7 @@
 static GLfloat theta[] = { 0.0, 0.0, 0.0 };
 static GLint eje = 2;
 static int delay = 100; // Milisegundos entre cada actualización
-
+static GLfloat scale = 0.01;
 
 // Función para dibujar una cara del cubo
 void cara(GLfloat v1[], GLfloat v2[], GLfloat v3[], GLfloat v4[], GLfloat color[])
@@ -84,6 +84,11 @@ void display(void)
     glRotatef(theta[1], 0.0, 1.0, 0.0);
     glRotatef(theta[2], 0.0, 0.0, 1.0);
 
+    // Rotación en el eje seleccionado
+    // glRotatef(theta[eje], (eje == 0), (eje == 1), (eje == 2));
+    // Escalado del cubo
+    glScaled(scale, scale, scale);
+
     // Dibujar ejes y cubo
     dibujarEjes();
     cubo();
@@ -120,6 +125,8 @@ void teclado(unsigned char tecla, int x, int y)
     case 'a': eje = 0; break;
     case 's': eje = 1; break;
     case 'd': eje = 2; break;
+    case '-': scale -= 0.01; break;
+    case '+': scale += 0.01; break;
     case 'f': exit(0); break;
     }
 }
